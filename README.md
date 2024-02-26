@@ -18,7 +18,9 @@ docker compose up
 it expose on port 80 the backend on the following URI:
 ```text
 http://localhost/api/cwm => core work management backend
+as test can be used the command  curl http://localhost/api/cwm/actuator/info that will show the applcaition version
 ```
 ```text
 http://localhost/api/cis => core inventory system
+as test can be used the command  curl http://localhost/api/cis/actuator/info that will show the applcaition version
 ```
