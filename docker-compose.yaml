@@ -9,13 +9,15 @@ services:
         ports:
             - 80:80
         restart: always
-        depends_on:
-          - core-inventory
-          - core-work
-
+        # depends_on:
+        #   - core-inventory
+        #   - core-work
 
     core-inventory:
       image: ghcr.io/eed-web-application/core-inventory-system:latest
+      profiles:
+        - "cis"
+        - "all-service"
       pull_policy: always
       restart: on-failure
       environment:
@@ -33,6 +35,9 @@ services:
 
     core-work:
       image: ghcr.io/eed-web-application/core-work-management:latest
+      profiles:
+        - "cwm"
+        - "all-service"
       pull_policy: always
       restart: on-failure
       environment:
@@ -49,6 +54,29 @@ services:
       depends_on:
         - mongodb-primary
 
+    elog:
+      image: ghcr.io/eed-web-application/elog-plus:latest
+      profiles:
+        - "elog"
+        - "all-service"
+      pull_policy: always
+      restart: on-failure
+      environment:
+        - ELOG_PLUS_MINIO_URL=http://minio:9000
+        - ELOG_PLUS_MONGODB_URI=mongodb://elogs:elogs@mongodb-primary:27017/elogs?authSource=elogs
+        - ELOG_PLUS_ADMIN_MONGODB_URI=mongodb://admin:admin@mongodb-primary:27017/?authSource=admin
+        - ELOG_PLUS_KAFKA_BOOTSTRAP=kafka:9092
+        - WAIT_LOGGER_LEVEL=debug
+        - WAIT_TIMEOUT=90
+        - WAIT_HOSTS=mongodb-primary:27017, minio:9000
+        - SPRING_PROFILES_ACTIVE=test,manage-root-user,init-logbook
+      ports:
+        - "8083:8080"
+      depends_on:
+        - minio
+        - kafka
+        - mongodb-primary
+
     mongodb-primary:
       image: ghcr.io/zcube/bitnami-compat/mongodb:6.0.5
       restart: on-failure
@@ -61,3 +89,39 @@ services:
         - MONGODB_REPLICA_SET_KEY=replicasetkey123
       ports:
         - "27017:27017"
+
+    minio:
+      image: minio/minio
+      ports:
+        - "9000:9000"
+        - "9001:9001"
+      environment:
+        - MINIO_ROOT_USER=minio
+        - MINIO_ROOT_PASSWORD=minio123
+      command: server --console-address ":9001" /data
+
+    zookeeper:
+      image: docker.io/bitnami/zookeeper:3.8
+      ports:
+        - "2181:2181"
+      environment:
+        - ALLOW_ANONYMOUS_LOGIN=yes
+
+    kafka:
+      image: docker.io/bitnami/kafka:3.5
+      ports:
+        - "9092:9092"
+        - '9094:9094'
+      environment:
+        - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+        - ALLOW_PLAINTEXT_LISTENER=yes
+        - KAFKA_CFG_KRAFT_BROKER_ID=1
+        - KAFKA_CFG_NODE_ID = 1
+        - KAFKA_ENABLE_KRAFT=NO
+        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+        - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,EXTERNAL://:9094
+        - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      depends_on:
+        - zookeeper
