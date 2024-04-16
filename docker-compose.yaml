@@ -66,10 +66,11 @@ services:
         - ELOG_PLUS_MONGODB_URI=mongodb://elogs:elogs@mongodb-primary:27017/elogs?authSource=elogs
         - ELOG_PLUS_ADMIN_MONGODB_URI=mongodb://admin:admin@mongodb-primary:27017/?authSource=admin
         - ELOG_PLUS_KAFKA_BOOTSTRAP=kafka:9092
+        - ELOG_PLUS_ROOT_USERS=user1@slac.stanford.edu
         - WAIT_LOGGER_LEVEL=debug
         - WAIT_TIMEOUT=90
         - WAIT_HOSTS=mongodb-primary:27017, minio:9000
-        - SPRING_PROFILES_ACTIVE=test,manage-root-user,init-logbook
+        - SPRING_PROFILES_ACTIVE=test,init-logbook
       ports:
         - "8083:8080"
       depends_on:
