@@ -49,6 +49,7 @@ services:
         - SPRING_PROFILES_ACTIVE=test,init-work-activity-type,init-shop-group,elog-support
         - CWM_ROOT_AUTHENTICATION_TOKEN_JSON=[{\"name\":\"root-token-1\",\"expiration\":\"2024-12-31\"}]
         - CWM_CIS_URL=http://core-inventory:8080
+        - CWM_ELOG_URL=http://elog:8080
       ports:
         - "8082:8080"
       depends_on:
