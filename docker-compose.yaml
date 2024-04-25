@@ -23,11 +23,12 @@ services:
       environment:
         - CIS_MONGODB_URI=mongodb://cis:cis@mongodb-primary:27017/cis?authSource=cis
         - CIS_ADMIN_MONGODB_URI=mongodb://admin:admin@mongodb-primary:27017/?authSource=admin
+        - CIS_ROOT_USERS=user1@slac.stanford.edu,service@internal.cwm.slac.app$
+        - CIS_ROOT_AUTHENTICATION_TOKEN_JSON=[{\"name\":\"root-token-1\",\"expiration\":\"2024-12-31\"}]
         - WAIT_LOGGER_LEVEL=debug
         - WAIT_TIMEOUT=90
         - WAIT_HOSTS=mongodb-primary:27017
         - SPRING_PROFILES_ACTIVE=test,manage-root-user-token-auth,init-demo-database
-        - CIS_ROOT_AUTHENTICATION_TOKEN_JSON=[{\"name\":\"root-token-1\",\"expiration\":\"2024-12-31\"}]
       ports:
         - "8081:8080"
       depends_on:
@@ -69,7 +70,7 @@ services:
         - ELOG_PLUS_MONGODB_URI=mongodb://elogs:elogs@mongodb-primary:27017/elogs?authSource=elogs
         - ELOG_PLUS_ADMIN_MONGODB_URI=mongodb://admin:admin@mongodb-primary:27017/?authSource=admin
         - ELOG_PLUS_KAFKA_BOOTSTRAP=kafka:9092
-        - ELOG_PLUS_ROOT_USERS=user1@slac.stanford.edu
+        - ELOG_PLUS_ROOT_USERS=user1@slac.stanford.edu,service@internal.cwm.slac.app$
         - WAIT_LOGGER_LEVEL=debug
         - WAIT_TIMEOUT=90
         - WAIT_HOSTS=mongodb-primary:27017, minio:9000
