@@ -1,0 +1,3 @@
+[submodule "core-suite-frontend"]
+	path = core-suite-frontend
+	url = https://github.com/eed-web-application/core-suite-frontend.git
