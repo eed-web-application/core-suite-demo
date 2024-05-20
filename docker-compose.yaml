@@ -131,9 +131,20 @@ services:
       depends_on:
         - zookeeper
 
-    frontend:
-      build:
-        context: core-suite-frontend
-        args:
-            - API_ENDPOINT=/api/cis
-            - API_ENDPOINT=/api/cwm
+  core-inventory-frontend:
+    image: ghcr.io/eed-web-application/core-inventory-system-frontend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - API_ENDPOINT=/api/cis
+    depends_on:
+      - core-inventory
+
+  core-work-frontend:
+    image: ghcr.io/eed-web-application/core-work-management-frontend:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - API_ENDPOINT=/api/cwm
+    depends_on:
+      - core-work
