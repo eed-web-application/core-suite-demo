@@ -51,7 +51,7 @@ services:
         - WAIT_LOGGER_LEVEL=debug
         - WAIT_TIMEOUT=90
         - WAIT_HOSTS=mongodb-primary:27017
-        - SPRING_PROFILES_ACTIVE=test,init-default-data,init-shop-group-demo,elog-support
+        - SPRING_PROFILES_ACTIVE=test,init-default-data,init-shop-group-demo,elog-support,init-domain,async-ops
 
       ports:
         - "8082:8080"
